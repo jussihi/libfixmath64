@@ -1,0 +1,5 @@
+fix32_unittests_ro64
+fix32_unittests_no64
+fix32_unittests_rn64
+fix32_unittests_nn64
+fix32_exp_unittests
