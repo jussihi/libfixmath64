@@ -1,5 +1,5 @@
 #include "fix32.h"
-
+#include "int128.h"
 
 #ifdef __GNUC__
 // Count leading zeros, using processor-specific instruction if available.
@@ -378,31 +378,28 @@ fix32_t fix32_mod(fix32_t x, fix32_t y)
 }
 
 
-/*#ifndef FIXMATH_NO_64BIT
 
-fix16_t fix16_lerp8(fix16_t inArg0, fix16_t inArg1, uint8_t inFract)
+fix32_t fix32_lerp8(fix32_t inArg0, fix32_t inArg1, uint8_t inFract)
 {
-	int64_t tempOut = int64_mul_i32_i32(inArg0, ((1 << 8) - inFract));
-	tempOut = int64_add(tempOut, int64_mul_i32_i32(inArg1, inFract));
-	tempOut = int64_shift(tempOut, -8);
-	return (fix16_t)int64_lo(tempOut);
+	int128_t tempOut = int128_mul_i64_i64(inArg0, ((1 << 8) - inFract));
+	tempOut = int128_add(tempOut, int128_mul_i64_i64(inArg1, inFract));
+	tempOut = int128_shift(tempOut, -8);
+	return (fix32_t)int128_lo(tempOut);
 }
 
-fix16_t fix16_lerp16(fix16_t inArg0, fix16_t inArg1, uint16_t inFract)
+fix32_t fix32_lerp16(fix32_t inArg0, fix32_t inArg1, uint16_t inFract)
 {
-	int64_t tempOut = int64_mul_i32_i32(inArg0, (((int32_t)1 << 16) - inFract));
-	tempOut = int64_add(tempOut, int64_mul_i32_i32(inArg1, inFract));
-	tempOut = int64_shift(tempOut, -16);
-	return (fix16_t)int64_lo(tempOut);
+	int128_t tempOut = int128_mul_i64_i64(inArg0, (((int64_t)1 << 16) - inFract));
+	tempOut = int128_add(tempOut, int128_mul_i64_i64(inArg1, inFract));
+	tempOut = int128_shift(tempOut, -16);
+	return (fix32_t)int128_lo(tempOut);
 }
 
-fix16_t fix16_lerp32(fix16_t inArg0, fix16_t inArg1, uint32_t inFract)
+fix32_t fix32_lerp32(fix32_t inArg0, fix32_t inArg1, uint32_t inFract)
 {
-	int64_t tempOut;
-	tempOut  = ((int64_t)inArg0 * (0 - inFract));
-	tempOut	+= ((int64_t)inArg1 * inFract);
+	int128_t tempOut;
+	tempOut = ((int128_t)inArg0 * (0 - inFract));
+	tempOut += ((int128_t)inArg1 * inFract);
 	tempOut >>= 32;
-	return (fix16_t)tempOut;
+	return (fix32_t)tempOut;
 }
-#endif
-*/

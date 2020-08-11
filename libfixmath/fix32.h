@@ -23,9 +23,7 @@ extern "C"
 
 #include <stdint.h>
 
-typedef int32_t fix16_t;
-typedef int64_t fix32_t;
-
+	typedef int64_t fix32_t;
 
 static const fix32_t FOUR_DIV_PI = 0x145F306DD;               /*!< Fix32 value of 4/PI */
 static const fix32_t _FOUR_DIV_PI2 = 0xFFFFFFFF983f4277;       /*!< Fix32 value of -4/PI² */
@@ -41,8 +39,7 @@ static const fix32_t fix32_pi = 13493037704;                  /*!< fix32_t value
 static const fix32_t fix32_e  = 11674931555;                  /*!< fix32_t value of e */
 static const fix32_t fix32_one = 0x0000000100000000;          /*!< fix32_t value of 1 */
 
-
-/* Conversion functions between fix16_t and float/integer.
+/* Conversion functions between fix32_t and float/integer.
  * These are inlined to allow compiler to optimize away constant numbers
  */
 static inline fix32_t fix32_from_int(int a)     { return a * fix32_one; }
@@ -153,16 +150,14 @@ extern fix32_t fix32_mod(fix32_t x, fix32_t y) FIXMATH_FUNC_ATTRS;
 
 
 
-/* Returns the linear interpolation: (inArg0 * (1 - inFract)) + (inArg1 * inFract)
- * TODO!!!
+/* Returns the linear interpolation: (inArg0 * (1 - inFract)) + (inArg1 * inFract):
  */
-/*
-extern fix16_t fix16_lerp8(fix16_t inArg0, fix16_t inArg1, uint8_t inFract) FIXMATH_FUNC_ATTRS;
-extern fix16_t fix16_lerp16(fix16_t inArg0, fix16_t inArg1, uint16_t inFract) FIXMATH_FUNC_ATTRS;
+extern fix32_t fix32_lerp8(fix32_t inArg0, fix32_t inArg1, uint8_t inFract) FIXMATH_FUNC_ATTRS;
+extern fix32_t fix32_lerp16(fix32_t inArg0, fix32_t inArg1, uint16_t inFract) FIXMATH_FUNC_ATTRS;
 #ifndef FIXMATH_NO_64BIT
-extern fix16_t fix16_lerp32(fix16_t inArg0, fix16_t inArg1, uint32_t inFract) FIXMATH_FUNC_ATTRS;
+extern fix32_t fix32_lerp32(fix32_t inArg0, fix32_t inArg1, uint32_t inFract) FIXMATH_FUNC_ATTRS;
 #endif
-*/
+
 
 
 /*! Returns the sine of the given fix32_t.
@@ -216,8 +211,7 @@ extern fix32_t fix32_sqrt(fix32_t inValue) FIXMATH_FUNC_ATTRS;
 static inline fix32_t fix32_sq(fix32_t x)
 	{ return fix32_mul(x, x); }
 
-/*! Returns the exponent (e^) of the given fix32_t.
- *  !!! Might give wrong returns values !!!
+/*! Returns the exponent (e^) of the given fix32_t.				<---------------------------------------  !!! Might give wrong returns values !!!
 */
 extern fix32_t fix32_exp(fix32_t inValue) FIXMATH_FUNC_ATTRS;
 
@@ -243,8 +237,6 @@ extern void fix32_to_str(fix32_t value, char *buf, int decimals);
  * value is too large or there were garbage characters.
  */
 extern fix32_t fix32_from_str(const char *buf);
-
-
 
 #ifdef __cplusplus
 }
