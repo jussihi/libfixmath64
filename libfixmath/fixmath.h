@@ -11,6 +11,9 @@ extern "C"
 	\brief Functions to perform fast accurate fixed-point math operations.
 */
 
+//#include "uint32.h"
+#include "int128.h"
+//#include "fract32.h"
 #include "fix32.h"
 
 #ifdef __cplusplus

@@ -23,7 +23,7 @@ extern "C"
 
 #include <stdint.h>
 
-	typedef int64_t fix32_t;
+typedef int64_t fix32_t;
 
 static const fix32_t FOUR_DIV_PI = 0x145F306DD;               /*!< Fix32 value of 4/PI */
 static const fix32_t _FOUR_DIV_PI2 = 0xFFFFFFFF983f4277;       /*!< Fix32 value of -4/PI² */
@@ -34,8 +34,10 @@ static const fix32_t THREE_PI_DIV_4 = 0x25B2F8FE6;            /*!< Fix32 value o
 static const fix32_t fix32_maximum  = 0x7FFFFFFFFFFFFFFF;     /*!< the maximum value of fix32_t */
 static const fix32_t fix32_minimum  = 0x8000000000000000;     /*!< the maximum value of fix32_t */
 static const fix32_t fix32_overflow = 0x8000000000000000;     /*!< the value used to indicate overflows when FIXMATH_NO_OVERFLOW is not specified */
+static const fix32_t fix32_epsilon = 0x0000000000000001;      /*!< the min absolute value of fix32_t */
 
-static const fix32_t fix32_pi = 13493037704;                  /*!< fix32_t value of pi */
+static const fix32_t fix32_pi = 13493037704;                  /*!< fix32_t value of pi */		//0x 0000 0003 243F 6A88
+static const fix32_t fix32_pi_over_2 = 6746518852;            /*!< fix32_t value of pi */		//0x 0000 0001 921F B544
 static const fix32_t fix32_e  = 11674931555;                  /*!< fix32_t value of e */
 static const fix32_t fix32_one = 0x0000000100000000;          /*!< fix32_t value of 1 */
 
@@ -49,7 +51,7 @@ static inline double  fix32_to_dbl(fix32_t a)   { return (double)a / fix32_one; 
 static inline int fix32_to_int(fix32_t a)
 {
 #ifdef FIXMATH_NO_ROUNDING
-		return (a >> 32);
+	return (a >> 32);
 #else
 	if (a >= 0)
 		return (a + (fix32_one >> 1)) / fix32_one;
@@ -154,9 +156,7 @@ extern fix32_t fix32_mod(fix32_t x, fix32_t y) FIXMATH_FUNC_ATTRS;
  */
 extern fix32_t fix32_lerp8(fix32_t inArg0, fix32_t inArg1, uint8_t inFract) FIXMATH_FUNC_ATTRS;
 extern fix32_t fix32_lerp16(fix32_t inArg0, fix32_t inArg1, uint16_t inFract) FIXMATH_FUNC_ATTRS;
-#ifndef FIXMATH_NO_64BIT
 extern fix32_t fix32_lerp32(fix32_t inArg0, fix32_t inArg1, uint32_t inFract) FIXMATH_FUNC_ATTRS;
-#endif
 
 
 

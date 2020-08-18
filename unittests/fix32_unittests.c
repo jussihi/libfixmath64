@@ -1,8 +1,9 @@
-#include <fix32.h>
+#include "../libfixmath/fix32.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdbool.h>
 #include "unittests.h"
+#include <math.h>
 
 const fix32_t testcases[] = {
   // Small numbers
@@ -41,25 +42,165 @@ const fix32_t testcases[] = {
 
 #define delta(a,b) (((a)>=(b)) ? (a)-(b) : (b)-(a))
 
-// TODO: fix the float-to-fix32 conversion to actually make this working.
 #ifdef FIXMATH_NO_ROUNDING
-const fix32_t max_delta = 200;
+const fix32_t max_delta = 1;
 #else
-const fix32_t max_delta = 200;
+const fix32_t max_delta = 0;
 #endif
+
+
+void PrintFloat(float f)
+{
+	printf("%f \n", f);
+}
+void PrintFix64f(fix32_t fx)
+{
+	float f = fix32_to_float(fx);
+	printf("%f \n", f);
+}
+void PrintFix64(fix32_t fx)
+{
+	double f = fix32_to_dbl(fx);
+	printf("%f \n", f);
+}
+
+void PrintFix64_Long(fix32_t fx)
+{
+	double f = fix32_to_dbl(fx);
+	printf("%.20f \n", f);
+}
 
 int main()
 {
   int status = 0;
-  
+
+  //{
+	 // COMMENT("Testing basic float");
+	 // PrintFix64_Long(fix32_epsilon);
+	 // PrintFix64(fix32_maximum);
+	 // PrintFix64(fix32_minimum);
+  //}
+
+  //{
+	 // COMMENT("Testing math operation");
+	 // TEST_DOUBLE_ERROR(fix32_sqrt(fix32_from_dbl(3661.56684)), fix32_from_dbl(60.51088199), 0.01f);
+	 // TEST_DOUBLE_ERROR(fix32_exp(fix32_from_dbl(3.56684)), fix32_from_dbl(35.40453785787), 0.01f);
+	 // TEST_DOUBLE_ERROR(fix32_log(fix32_from_dbl(45.24)), fix32_from_dbl(3.81198165), 0.01f);
+	 // TEST_DOUBLE_ERROR(fix32_log2(fix32_from_dbl(45.24)), fix32_from_dbl(5.499527), 0.01f);
+	 // TEST_DOUBLE_ERROR(fix32_slog2(fix32_from_dbl(-43.0)), fix32_minimum, 0.01f);
+	 // return 0;
+  //}
+
+  //{
+	 // //COMMENT("Testing overflow float");
+	 // //PrintFix64(fix32_mul(fix32_from_dbl(3661.56684), fix32_from_dbl(89378.654563)));
+	 // //PrintFloat(3661.56684f * 89378.654563f);
+	 // //PrintFix64(fix32_from_dbl(327265917.75169549092));
+	 // //fix32_t t1 = fix32_mul(fix32_from_float(3661.56684f), fix32_from_float(89378.654563f));
+	 // //fix32_t r = fix32_from_dbl(327265917.75169549092);
+	 // //double d1 = fix32_to_dbl((x));
+	 // //if (abs(result - fix32_to_dbl((x))) > thres)
+  //}
+
+  //{
+	 // COMMENT("Testing lerp");
+	 // TEST_DOUBLE_ERROR(fix32_lerp8(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 76), fix32_from_dbl(29.8), 0.01f);
+	 // TEST_DOUBLE_ERROR(fix32_lerp16(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 37484), fix32_from_dbl(57.196044921875), 0.01f);
+	 // TEST_DOUBLE_ERROR(fix32_lerp32(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 4698323), fix32_from_dbl(0.109391356818377971649169921875), 0.01f);
+	 // return 0;
+  //}
+
   {
-    COMMENT("Testing basic multiplication");
-    TEST(fix32_mul(fix32_from_int(2), fix32_from_int(1)) == fix32_from_int(2));
-    TEST(fix32_mul(fix32_from_int(5), fix32_from_int(5)) == fix32_from_int(25));
-    TEST(fix32_mul(fix32_from_int(-5), fix32_from_int(5)) == fix32_from_int(-25));
-    TEST(fix32_mul(fix32_from_int(-5), fix32_from_int(-5)) == fix32_from_int(25));
-    TEST(fix32_mul(fix32_from_int(5), fix32_from_int(-5)) == fix32_from_int(-25));
-    return 0;
+	  COMMENT("Testing basic multiplication");
+	  TEST(fix32_mul(fix32_from_int(2), fix32_from_int(1)) == fix32_from_int(2));
+	  TEST(fix32_mul(fix32_from_int(5), fix32_from_int(5)) == fix32_from_int(25));
+	  TEST(fix32_mul(fix32_from_int(-5), fix32_from_int(5)) == fix32_from_int(-25));
+	  TEST(fix32_mul(fix32_from_int(-5), fix32_from_int(-5)) == fix32_from_int(25));
+	  TEST(fix32_mul(fix32_from_int(5), fix32_from_int(-5)) == fix32_from_int(-25));
+  }
+
+  {
+	  COMMENT("Testing trigonometric functions");
+	  const int TRIG_TEST_SAMPLES = 10000;
+	  double max_err = 0;
+	  double max_err_angle = 0;
+	  for (int i = 0; i < TRIG_TEST_SAMPLES; ++i)
+	  {
+		  double angle = 3.1415926 * 2 * (double)i / (double)TRIG_TEST_SAMPLES;
+		  double dResult = sin(angle);
+		  fix32_t fResult = fix32_sin(fix32_from_dbl(angle));
+		  double err = fabs(fix32_to_dbl(fResult) - dResult);
+		  if (err > max_err)
+		  {
+			  max_err = err;
+			  max_err_angle = angle;
+		  }
+	  }
+	  printf("[sin]: max error: %.10f, when angle = %.10f\n", max_err, max_err_angle);
+
+	  max_err = 0;
+	  max_err_angle = 0;
+	  for (int i = 0; i < TRIG_TEST_SAMPLES; ++i)
+	  {
+		  double angle = 3.1415926 * 2 * (double)i / (double)TRIG_TEST_SAMPLES;
+		  double dResult = cos(angle);
+		  fix32_t fResult = fix32_cos(fix32_from_dbl(angle));
+		  double err = fabs(fix32_to_dbl(fResult) - dResult);
+		  if (err > max_err)
+		  {
+			  max_err = err;
+			  max_err_angle = angle;
+		  }
+	  }
+	  printf("[cos]: max error: %.10f, when angle = %.10f\n", max_err, max_err_angle);
+
+	  max_err = 0;
+	  max_err_angle = 0;
+	  for (int i = 0; i < TRIG_TEST_SAMPLES; ++i)
+	  {
+		  double angle = -3.141 * 0.5 + 3.1415926 * (double)i / (double)(TRIG_TEST_SAMPLES+10);
+		  double dResult = tan(angle);
+		  fix32_t fResult = fix32_tan(fix32_from_dbl(angle));
+		  double err = fabs(fix32_to_dbl(fResult) - dResult);
+		  if (err > max_err)
+		  {
+			  max_err = err;
+			  max_err_angle = angle;
+		  }
+	  }
+	  printf("[tan]: max error: %.10f, when angle = %.10f\n", max_err, max_err_angle);
+
+	  max_err = 0;
+	  max_err_angle = 0;
+	  for (int i = 0; i < TRIG_TEST_SAMPLES; ++i)
+	  {
+		  double angle = -1 + 2.0 * (double)i / (double)TRIG_TEST_SAMPLES;
+		  double dResult = asin(angle);
+		  fix32_t fResult = fix32_asin(fix32_from_dbl(angle));
+		  double err = fabs(fix32_to_dbl(fResult) - dResult);
+		  if (err > max_err)
+		  {
+			  max_err = err;
+			  max_err_angle = angle;
+		  }
+	  }
+	  printf("[asin]: max error: %.10f, when value = %.10f\n", max_err, max_err_angle);
+
+	  max_err = 0;
+	  max_err_angle = 0;
+	  for (int i = 0; i < TRIG_TEST_SAMPLES; ++i)
+	  {
+		  double angle = -1 + 2.0 * (double)i / (double)TRIG_TEST_SAMPLES;
+		  double dResult = acos(angle);
+		  fix32_t fResult = fix32_acos(fix32_from_dbl(angle));
+		  double err = fabs(fix32_to_dbl(fResult) - dResult);
+		  if (err > max_err)
+		  {
+			  max_err = err;
+			  max_err_angle = angle;
+		  }
+	  }
+	  printf("[acos]: max error: %.10f, when value = %.10f\n", max_err, max_err_angle);
   }
   
 #ifndef FIXMATH_NO_ROUNDING
@@ -187,8 +328,8 @@ int main()
             continue;
           }
           
-          printf("\n%f / %f = %f\n", fix32_to_dbl(a), fix32_to_dbl(b), fix32_to_dbl(fresult));
-          printf("%f / %f = %f\n", fa, fb, (fa / fb));
+          printf("\n%.15f / %.15f = %.25f\n", fix32_to_dbl(a), fix32_to_dbl(b), fix32_to_dbl(result));
+          printf("%.15f / %.15f = %.25f\n", fa, fb, (fa / fb));
           printf("delta: %ld\n", delta(fresult, result));
           failures++;
         }

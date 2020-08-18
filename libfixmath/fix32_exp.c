@@ -2,12 +2,12 @@
 #include <stdbool.h>
 
 
-// TODO!! Fix the negative boundary
 fix32_t fix32_exp(fix32_t inValue) {
 	if(inValue == 0          ) return fix32_one;
 	if(inValue == fix32_one  ) return fix32_e;
-	if(inValue >= 44667659878) return fix32_maximum;
-	if(inValue <= -772243    ) return 0;							// todo: fix!!!!
+	if(inValue >= 92288378626I64) return fix32_maximum;	//fix32_from_dbl(ln(fix32_to_dbl(fix32_maximum))) = fix32_from_dbl(ln(2147483648)) = fix32_from_dbl(21.487562597) = 92288378625
+	if(inValue <= -98242467570I64) return 0;			//fix32_from_dbl(ln(fix32_to_dbl(fix32_epsilon))) = fix32_from_dbl(ln(0.00000000023283064365)) = fix32_from_dbl(-22.1807097779) = -95265423098
+														//fix32_from_dbl(ln(0.5*fix32_to_dbl(fix32_epsilon))) = fix32_from_dbl(ln(0.000000000116415321825)) = fix32_from_dbl(-22.87385) = -98242467570
 
                         
 	/* The algorithm is based on the power series for exp(x):
@@ -21,20 +21,20 @@ fix32_t fix32_exp(fix32_t inValue) {
 	// and exp(-x) = 1/exp(x).
 	bool neg = (inValue < 0);
 	if (neg) inValue = -inValue;
-            
+
 	fix32_t result = inValue + fix32_one;
 	fix32_t term = inValue;
 
-	uint_fast8_t i;        
+	uint_fast8_t i;
 	for (i = 2; i < 30; i++)
 	{
 		term = fix32_mul(term, fix32_div(inValue, fix32_from_int(i)));
 		result += term;
-                
+
 		if ((term < 500) && ((i > 15) || (term < 20)))
 			break;
 	}
-            
+
 	if (neg)
 		result = fix32_div(fix32_one, result);
 
@@ -158,20 +158,20 @@ fix32_t fix32_log2(fix32_t x)
 	if (x < fix32_one)
 	{
 		// Note that the inverse of this would overflow.
-		// This is the exact answer for log2(1.0 / 65536)
-		if (x == 1) return fix32_from_int(-16);
+		// This is the exact answer for log2(1.0 / 4294967296)
+		if (x == 1) return fix32_from_int(-32);
 
 		fix32_t inverse = fix32_div(fix32_one, x);
 		return -fix32__log2_inner(inverse);
 	}
 
 	// If input >= 1, just proceed as normal.
-	// Note that x == fix16_one is a special case, where the answer is 0.
+	// Note that x == fix32_one is a special case, where the answer is 0.
 	return fix32__log2_inner(x);
 }
 
 /**
- * This is a wrapper for fix16_log2 which implements saturation arithmetic.
+ * This is a wrapper for fix32_log2 which implements saturation arithmetic.
  */
 fix32_t fix32_slog2(fix32_t x)
 {

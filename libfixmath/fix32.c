@@ -397,9 +397,8 @@ fix32_t fix32_lerp16(fix32_t inArg0, fix32_t inArg1, uint16_t inFract)
 
 fix32_t fix32_lerp32(fix32_t inArg0, fix32_t inArg1, uint32_t inFract)
 {
-	int128_t tempOut;
-	tempOut = ((int128_t)inArg0 * (0 - inFract));
-	tempOut += ((int128_t)inArg1 * inFract);
-	tempOut >>= 32;
-	return (fix32_t)tempOut;
+	int128_t tempOut = int128_mul_i64_i64(inArg0, (((int64_t)1 << 32) - inFract));
+	tempOut = int128_add(tempOut, int128_mul_i64_i64(inArg1, inFract));
+	tempOut = int128_shift(tempOut, -32);
+	return (fix32_t)int128_lo(tempOut);
 }

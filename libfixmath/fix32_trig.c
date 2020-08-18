@@ -1,8 +1,9 @@
 #include <limits.h>
 #include "fix32.h"
 
+#define FIXMATH_SIN_LUT
 #if defined(FIXMATH_SIN_LUT)
-#include "fix16_trig_sin_lut.h"
+#include "fix32_trig_sin_lut.h"
 #endif
 
 
@@ -49,11 +50,11 @@ fix32_t fix32_sin(fix32_t inAngle)
 		tempAngle -= fix32_pi;
 		if(tempAngle >= (fix32_pi >> 1))
 			tempAngle = fix32_pi - tempAngle;
-		tempOut = -(tempAngle >= _fix32_sin_lut_count ? fix32_one : _fix32_sin_lut[tempAngle]);
+		tempOut = -(tempAngle >= _fix32_sin_lut_count ? fix32_one : _fix32_sin_lut[tempAngle >> 16]);
 	} else {
 		if(tempAngle >= (fix32_pi >> 1))
 			tempAngle = fix32_pi - tempAngle;
-		tempOut = (tempAngle >= _fix32_sin_lut_count ? fix32_one : _fix32_sin_lut[tempAngle]);
+		tempOut = (tempAngle >= _fix32_sin_lut_count ? fix32_one : _fix32_sin_lut[tempAngle >> 16]);
 	}
 	#else
 	if(tempAngle > fix32_pi)
