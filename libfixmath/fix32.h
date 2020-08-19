@@ -227,16 +227,17 @@ extern fix32_t fix32_log2(fix32_t x) FIXMATH_FUNC_ATTRS;
  */
 extern fix32_t fix32_slog2(fix32_t x) FIXMATH_FUNC_ATTRS;
 
-/*! Convert fix32_t value to a string.
- * Required buffer length for largest values is xx bytes.
+/*! Returns 2 raised to the specified power.
  */
-extern void fix32_to_str(fix32_t value, char *buf, int decimals);
+extern fix32_t fix32_pow2(fix32_t x) FIXMATH_FUNC_ATTRS;
 
-/*! Convert string to a fix32_t value
- * Ignores spaces at beginning and end. Returns fix32_overflow if
- * value is too large or there were garbage characters.
+/*! Returns a specified number raised to the specified power.
  */
-extern fix32_t fix32_from_str(const char *buf);
+extern fix32_t fix32_pow(fix32_t b, fix32_t exp) FIXMATH_FUNC_ATTRS;
+
+/*! Returns the saturated version of fix32_pow.
+ */
+extern fix32_t fix32_spow(fix32_t b, fix32_t exp) FIXMATH_FUNC_ATTRS;
 
 #ifdef __cplusplus
 }

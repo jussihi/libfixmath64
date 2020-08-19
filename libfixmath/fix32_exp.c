@@ -181,3 +181,85 @@ fix32_t fix32_slog2(fix32_t x)
 		return fix32_minimum;
 	return retval;
 }
+
+fix32_t fix32_pow2(fix32_t x)
+{
+	const static fix32_t LN2 =	    0x00000000B17217F7;
+	const static fix32_t Log2Max =  0x0000001F00000000;
+	const static fix32_t Log2Min = -0x0000002000000000;
+
+	if (x == 0)
+		return fix32_one;
+
+	// Avoid negative arguments by exploiting that exp(-x) = 1/exp(x).
+	bool neg = x < 0;
+	if (neg)
+		x = -x;
+
+	if (x == fix32_one)
+	{
+		return neg ? 0x0000000080000000 : 0x0000000200000000;
+		//return neg ? fix32_from_double(0.5) : fix32_from_int(2);
+	}
+	if (x >= Log2Max)
+	{
+		return neg ? fix32_epsilon : fix32_maximum;
+	}
+	if (x <= Log2Min)
+	{
+		return neg ? fix32_maximum : 0;
+	}
+
+	/* The algorithm is based on the power series for exp(x):
+	 * http://en.wikipedia.org/wiki/Exponential_function#Formal_definition
+	 *
+	 * From term n, we get term n+1 by multiplying with x/n.
+	 * When the sum term drops to zero, we can stop summing.
+	 */
+
+	fix32_t int_part = fix32_floor(x);
+	int integerPart = (int)(int_part >> 32);
+	// Take fractional part of exponent
+	x = x & 0x00000000FFFFFFFF;
+
+	fix32_t result = fix32_one;
+	fix32_t term = fix32_one;
+	int i = 1;
+	while (term != 0)
+	{
+		term = fix32_mul(term, fix32_mul(LN2, fix32_div(x, fix32_from_int(i))));
+		result += term;
+		i++;
+	}
+
+	result = result << integerPart;
+
+	if (neg)
+		result = fix32_div(fix32_one, result);
+
+	return result;
+}
+
+fix32_t fix32_pow(fix32_t b, fix32_t exp)
+{
+	if (b == fix32_one || exp == 0)
+		return fix32_one;
+
+	if (b == 0)
+		return 0;
+
+	fix32_t log2 = fix32_log2(b);
+	return fix32_pow2(fix32_mul(exp, log2));
+}
+
+fix32_t fix32_spow(fix32_t b, fix32_t exp)
+{
+	if (b == fix32_one || exp == 0)
+		return fix32_one;
+
+	if (b == 0)
+		return 0;
+
+	fix32_t log2 = fix32_slog2(b);
+	return fix32_pow2(fix32_smul(exp, log2));
+}

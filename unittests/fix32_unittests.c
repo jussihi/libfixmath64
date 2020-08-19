@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "unittests.h"
 #include <math.h>
+#include <inttypes.h>
 
 const fix32_t testcases[] = {
   // Small numbers
@@ -74,41 +75,40 @@ int main()
 {
   int status = 0;
 
-  //{
-	 // COMMENT("Testing basic float");
-	 // PrintFix64_Long(fix32_epsilon);
-	 // PrintFix64(fix32_maximum);
-	 // PrintFix64(fix32_minimum);
-  //}
+  {
+	  COMMENT("Testing basic float");
+	  //printf("%#018"PRIx64"\n", fix32_from_dbl(0.5));
+	  PrintFix64_Long(fix32_epsilon);
+	  PrintFix64(fix32_maximum);
+	  PrintFix64(fix32_minimum);
+  }
+
+  {
+	  COMMENT("Testing math operation");
+	  TEST_DOUBLE_ERROR(fix32_pow2(fix32_from_dbl(24.4894616)), fix32_from_dbl(23553883.31583202), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_pow(fix32_from_dbl(3.456546), fix32_from_dbl(11.246556)), fix32_from_dbl(1142539.57167091), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_spow(fix32_from_dbl(312.456546), fix32_from_dbl(11.246556)), fix32_maximum, 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_spow(fix32_from_dbl(-312.456546), fix32_from_dbl(1100.246556)), fix32_minimum, 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_sqrt(fix32_from_dbl(3661.56684)), fix32_from_dbl(60.51088199), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_exp(fix32_from_dbl(3.56684)), fix32_from_dbl(35.40453785787), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_log(fix32_from_dbl(45.24)), fix32_from_dbl(3.81198165), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_log2(fix32_from_dbl(45.24)), fix32_from_dbl(5.499527), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_slog2(fix32_from_dbl(-43.0)), fix32_minimum, 0.01f);
+  }
 
   //{
-	 // COMMENT("Testing math operation");
-	 // TEST_DOUBLE_ERROR(fix32_sqrt(fix32_from_dbl(3661.56684)), fix32_from_dbl(60.51088199), 0.01f);
-	 // TEST_DOUBLE_ERROR(fix32_exp(fix32_from_dbl(3.56684)), fix32_from_dbl(35.40453785787), 0.01f);
-	 // TEST_DOUBLE_ERROR(fix32_log(fix32_from_dbl(45.24)), fix32_from_dbl(3.81198165), 0.01f);
-	 // TEST_DOUBLE_ERROR(fix32_log2(fix32_from_dbl(45.24)), fix32_from_dbl(5.499527), 0.01f);
-	 // TEST_DOUBLE_ERROR(fix32_slog2(fix32_from_dbl(-43.0)), fix32_minimum, 0.01f);
-	 // return 0;
+	 // COMMENT("Testing overflow float");
+	 // TEST_DOUBLE_ERROR(fix32_add(fix32_maximum, fix32_one), fix32_maximum, 0.01f);
+	 // TEST_DOUBLE_ERROR(fix32_mul(fix32_from_dbl(3661.56684), fix32_from_dbl(89378.654563)), fix32_overflow, 0.01f);
+	 // TEST_DOUBLE_ERROR(fix32_div(fix32_from_dbl(3661.56684), fix32_from_dbl(89378.654563)), fix32_overflow, 0.01f);
   //}
 
-  //{
-	 // //COMMENT("Testing overflow float");
-	 // //PrintFix64(fix32_mul(fix32_from_dbl(3661.56684), fix32_from_dbl(89378.654563)));
-	 // //PrintFloat(3661.56684f * 89378.654563f);
-	 // //PrintFix64(fix32_from_dbl(327265917.75169549092));
-	 // //fix32_t t1 = fix32_mul(fix32_from_float(3661.56684f), fix32_from_float(89378.654563f));
-	 // //fix32_t r = fix32_from_dbl(327265917.75169549092);
-	 // //double d1 = fix32_to_dbl((x));
-	 // //if (abs(result - fix32_to_dbl((x))) > thres)
-  //}
-
-  //{
-	 // COMMENT("Testing lerp");
-	 // TEST_DOUBLE_ERROR(fix32_lerp8(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 76), fix32_from_dbl(29.8), 0.01f);
-	 // TEST_DOUBLE_ERROR(fix32_lerp16(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 37484), fix32_from_dbl(57.196044921875), 0.01f);
-	 // TEST_DOUBLE_ERROR(fix32_lerp32(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 4698323), fix32_from_dbl(0.109391356818377971649169921875), 0.01f);
-	 // return 0;
-  //}
+  {
+	  COMMENT("Testing lerp");
+	  TEST_DOUBLE_ERROR(fix32_lerp8(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 76), fix32_from_dbl(29.8), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_lerp16(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 37484), fix32_from_dbl(57.196044921875), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_lerp32(fix32_from_dbl(0.0), fix32_from_dbl(100.0), 4698323), fix32_from_dbl(0.109391356818377971649169921875), 0.01f);
+  }
 
   {
 	  COMMENT("Testing basic multiplication");
