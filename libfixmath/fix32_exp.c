@@ -43,7 +43,7 @@ fix32_t fix32_exp(fix32_t inValue) {
 
 
 
-fix32_t fix32_log(fix32_t inValue)
+fix32_t fix32_ln(fix32_t inValue)
 {
 	fix32_t guess = fix32_from_int(2);
 	fix32_t delta;

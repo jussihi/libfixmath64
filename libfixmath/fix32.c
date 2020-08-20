@@ -402,3 +402,10 @@ fix32_t fix32_lerp32(fix32_t inArg0, fix32_t inArg1, uint32_t inFract)
 	tempOut = int128_shift(tempOut, -32);
 	return (fix32_t)int128_lo(tempOut);
 }
+
+fix32_t fix32_lerp(fix32_t inArg0, fix32_t inArg1, fix32_t inFract)
+{
+	fix32_t fx1 = fix32_mul(inArg0, fix32_sub(fix32_one, inFract));
+	fix32_t fx2 = fix32_mul(inArg1, inFract);
+	return fix32_add(fx1, fx2);
+}

@@ -37,7 +37,8 @@ static const fix32_t fix32_overflow = 0x8000000000000000;     /*!< the value use
 static const fix32_t fix32_epsilon = 0x0000000000000001;      /*!< the min absolute value of fix32_t */
 
 static const fix32_t fix32_pi = 13493037704;                  /*!< fix32_t value of pi */		//0x 0000 0003 243F 6A88
-static const fix32_t fix32_pi_over_2 = 6746518852;            /*!< fix32_t value of pi */		//0x 0000 0001 921F B544
+static const fix32_t fix32_pi_over_2 = 6746518852;            /*!< fix32_t value of pi/2 */		//0x 0000 0001 921F B544
+static const fix32_t fix32_one_over_pi = 0x00000000517cc1b7;  /*!< fix32_t value of 1/pi */		//0x 0000 0001 921F B544
 static const fix32_t fix32_e  = 11674931555;                  /*!< fix32_t value of e */
 static const fix32_t fix32_one = 0x0000000100000000;          /*!< fix32_t value of 1 */
 
@@ -157,6 +158,7 @@ extern fix32_t fix32_mod(fix32_t x, fix32_t y) FIXMATH_FUNC_ATTRS;
 extern fix32_t fix32_lerp8(fix32_t inArg0, fix32_t inArg1, uint8_t inFract) FIXMATH_FUNC_ATTRS;
 extern fix32_t fix32_lerp16(fix32_t inArg0, fix32_t inArg1, uint16_t inFract) FIXMATH_FUNC_ATTRS;
 extern fix32_t fix32_lerp32(fix32_t inArg0, fix32_t inArg1, uint32_t inFract) FIXMATH_FUNC_ATTRS;
+extern fix32_t fix32_lerp(fix32_t inArg0, fix32_t inArg1, fix32_t inFract) FIXMATH_FUNC_ATTRS;
 
 
 
@@ -217,7 +219,7 @@ extern fix32_t fix32_exp(fix32_t inValue) FIXMATH_FUNC_ATTRS;
 
 /*! Returns the natural logarithm of the given fix32_t.
  */
-extern fix32_t fix32_log(fix32_t inValue) FIXMATH_FUNC_ATTRS;
+extern fix32_t fix32_ln(fix32_t inValue) FIXMATH_FUNC_ATTRS;
 
 /*! Returns the base 2 logarithm of the given fix32_t.
  */
@@ -241,7 +243,6 @@ extern fix32_t fix32_spow(fix32_t b, fix32_t exp) FIXMATH_FUNC_ATTRS;
 
 #ifdef __cplusplus
 }
-#include "fix16.hpp"
 #endif
 
 #endif

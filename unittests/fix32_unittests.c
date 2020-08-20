@@ -78,6 +78,7 @@ int main()
   {
 	  COMMENT("Testing basic float");
 	  //printf("%#018"PRIx64"\n", fix32_from_dbl(0.5));
+	  printf("%#018"PRIx64"\n", fix32_from_dbl(1/3.141592653589));
 	  PrintFix64_Long(fix32_epsilon);
 	  PrintFix64(fix32_maximum);
 	  PrintFix64(fix32_minimum);
@@ -91,7 +92,7 @@ int main()
 	  TEST_DOUBLE_ERROR(fix32_spow(fix32_from_dbl(-312.456546), fix32_from_dbl(1100.246556)), fix32_minimum, 0.01f);
 	  TEST_DOUBLE_ERROR(fix32_sqrt(fix32_from_dbl(3661.56684)), fix32_from_dbl(60.51088199), 0.01f);
 	  TEST_DOUBLE_ERROR(fix32_exp(fix32_from_dbl(3.56684)), fix32_from_dbl(35.40453785787), 0.01f);
-	  TEST_DOUBLE_ERROR(fix32_log(fix32_from_dbl(45.24)), fix32_from_dbl(3.81198165), 0.01f);
+	  TEST_DOUBLE_ERROR(fix32_ln(fix32_from_dbl(45.24)), fix32_from_dbl(3.81198165), 0.01f);
 	  TEST_DOUBLE_ERROR(fix32_log2(fix32_from_dbl(45.24)), fix32_from_dbl(5.499527), 0.01f);
 	  TEST_DOUBLE_ERROR(fix32_slog2(fix32_from_dbl(-43.0)), fix32_minimum, 0.01f);
   }
