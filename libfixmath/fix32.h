@@ -52,7 +52,7 @@ static inline double  fix32_to_dbl(fix32_t a)   { return (double)a / fix32_one; 
 static inline int fix32_to_int(fix32_t a)
 {
 #ifdef FIXMATH_NO_ROUNDING
-    return (a >> 16);
+    return (a >> 32);
 #else
 	if (a >= 0)
 		return (a + (fix32_one >> 1)) / fix32_one;
