@@ -52,7 +52,7 @@ static inline double  fix32_to_dbl(fix32_t a)   { return (double)a / fix32_one; 
 static inline int fix32_to_int(fix32_t a)
 {
 #ifdef FIXMATH_NO_ROUNDING
-    return (a >> 32);
+		return (a >> 32);
 #else
 	if (a >= 0)
 		return (a + (fix32_one >> 1)) / fix32_one;
@@ -78,14 +78,24 @@ static inline fix32_t fix32_from_dbl(double a)
 	return (fix32_t)temp;
 }
 
-/* Macro for defining fix32_t constant values.
-   The functions above can't be used from e.g. global variable initializers,
-   and their names are quite long also. This macro is useful for constants
-   springled alongside code, e.g. F32(1.234).
+/* Converts a binary IEEE745 float to a fixed point q31.32 integer
+ * without FPO
+ */
+extern fix32_t fix32_from_float_bin(const void* value);
 
-   Note that the argument is evaluated multiple times, and also otherwise
-   you should only use this for constant values. For runtime-conversions,
-   use the functions above.
+/* Converts a q31.32 integer back to binary IEEE754 floating point
+ * It returns uint32_t that contains the 32-bit float value
+ */
+extern uint32_t float_from_fix32_bin(fix32_t value);
+
+/* Macro for defining fix32_t constant values.
+	 The functions above can't be used from e.g. global variable initializers,
+	 and their names are quite long also. This macro is useful for constants
+	 springled alongside code, e.g. F32(1.234).
+
+	 Note that the argument is evaluated multiple times, and also otherwise
+	 you should only use this for constant values. For runtime-conversions,
+	 use the functions above.
 */
 #define F32(x) ((fix32_t)(((x) >= 0) ? ((x) * 4294967296.0 + 0.5) : ((x) * 4294967296.0 - 0.5)))
 

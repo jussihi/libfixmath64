@@ -1,6 +1,130 @@
 #include "fix32.h"
 
 
+#ifdef __GNUC__
+// Count leading zeros, using processor-specific instruction if available.
+#define clz(x) (__builtin_clzl(x) - (8 * sizeof(long) - 64))
+#else
+static uint8_t clz(uint64_t x)
+{
+	uint8_t result = 0;
+	if (x == 0) return 64;
+	while (!(x & 0xF000000000000000)) { result += 4; x <<= 4; }
+	while (!(x & 0x8000000000000000)) { result += 1; x <<= 1; }
+	return result;
+}
+#endif
+
+/* Binary conversion functions for machines without 
+ * FPO but somehow access to IEEE745 float binary data
+ */
+fix32_t fix32_from_float_bin(const void* value)
+{
+	int64_t fi = *(int64_t *)value;
+	// get the fraction
+	fix32_t q3232 = (fi & ((1 << 23) - 1)) | 1 << 23;
+	// get the exponent
+	int64_t expon = ((fi >> 23) & ((1 << 8) - 1)) - 127;
+	// get the shift
+	int32_t shift = 32 + expon - 23;
+	// get the sign
+	int64_t sign = (fi >> 31) & 1;
+
+	if (shift >= 32 || shift <= -32)
+	{
+		q3232 = 0;
+	}
+	else
+	{
+		if (shift < 0)
+		{
+			q3232 >>= -shift;
+		}
+		else
+		{
+			q3232 <<= shift;
+		}
+	}
+
+	if (sign)
+	{
+		int64_t int_part = (int32_t)((q3232 & 0xFFFFFFFF00000000) >> 32);
+		int_part *= -1;
+
+		uint32_t frac_part = (uint32_t)(q3232 & 0x00000000FFFFFFFF);
+		if (frac_part)
+		{
+			frac_part = 0xFFFFFFFF - frac_part;
+			q3232 &= 0xFFFFFFFF00000000;
+			q3232 ^= frac_part;
+			int_part -= 1;
+		}
+		q3232 &= 0x00000000FFFFFFFF;
+		q3232 ^= int_part << 32;
+	}
+
+	return q3232;
+}
+
+static int32_t count_bits_pow2(uint64_t x)
+{
+	int32_t l = -33;
+	for (uint64_t i = 0; i < 64; i++)
+	{
+		uint64_t test = 1ULL << i;
+		if (x >= test)
+		{
+			l++;
+		}
+		else
+		{
+			break;
+		}
+	}
+	return l;
+}
+
+uint32_t float_from_fix32_bin(fix32_t value)
+{
+	int64_t original_num = (int64_t)value;
+	uint64_t sign = 0;
+	if (original_num < 0)
+	{
+		sign = 1;
+	}
+
+	// remove the signed bit if it's set
+	int64_t unsigned_ver = original_num < 0 ? -original_num : original_num;
+
+	// calculate mantissa
+	int lz = clz(unsigned_ver);
+	uint64_t y = unsigned_ver << (lz + 1);
+
+	// 33 --> because we use 64-bit fixed point num, the middle of it is at 32,
+	// and +1 for the sign bit. Then 8 is the exponent bits, which is 8 for IEEE754
+	uint64_t mantissa = y >> (33 + 8);
+
+	// get the non-fractal bits, add the exponent bias ( 127 in IEEE754 ) to get exponent
+	// uint64_t non_fractal = (unsigned_ver >> 32);
+	uint64_t exp = count_bits_pow2(unsigned_ver) + 127;
+
+	// construct the final IEEE754 float binary number
+	// first add the last 23 bits (mantissa)
+	uint32_t ret = mantissa;
+
+	// add exponent
+	ret |= (exp << 23);
+
+	// add the sign if needed
+	if (sign)
+	{
+		ret |= 0x80000000;
+	}
+
+	return ret;
+}
+
+
 /* Subtraction and addition with overflow detection.
  * The versions without overflow detection are inlined in the header.
  */
@@ -141,19 +265,6 @@ fix32_t fix32_smul(fix32_t inArg0, fix32_t inArg1)
  * and share.
  */
 #if !defined(FIXMATH_OPTIMIZE_8BIT)
-#ifdef __GNUC__
-// Count leading zeros, using processor-specific instruction if available.
-#define clz(x) (__builtin_clzl(x) - (8 * sizeof(long) - 64))
-#else
-static uint8_t clz(uint64_t x)
-{
-	uint8_t result = 0;
-	if (x == 0) return 64;
-	while (!(x & 0xF000000000000000)) { result += 4; x <<= 4; }
-	while (!(x & 0x8000000000000000)) { result += 1; x <<= 1; }
-	return result;
-}
-#endif
 
 fix32_t fix32_div(fix32_t a, fix32_t b)
 {
